@@ -1,15 +1,14 @@
 const express = require("express")
-const mongoose = require("mongoose")
 const xss = require("xss-clean")
 const mongoSanitize = require("express-mongo-sanitize")
 const bodyParser = require("body-parser")
-const routes = require("./routes")
+const passport = require("passport")
 
 const { handleError, convertToApiError } = require("./middlewares/errorApi")
 const { jwtStrategy } = require("./middlewares/passport")
-const passport = require("passport")
 
-const url = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASSWORD}${process.env.DB_HOST}?retryWrites=true&w=majority`
+const routes = require("./routes")
+require("./mongoose")
 
 const app = express()
 
@@ -29,9 +28,6 @@ app.use(
     },
   })
 )
-
-mongoose.set("strictQuery", true)
-mongoose.connect(url)
 
 app.use(passport.initialize())
 passport.use("jwt", jwtStrategy)
