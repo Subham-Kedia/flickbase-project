@@ -28,6 +28,7 @@ const verify = (req, res, resolve, reject, rights) => async (error, user) => {
         )
       );
     }
+    res.locals.permission = permission
   }
   resolve();
 };

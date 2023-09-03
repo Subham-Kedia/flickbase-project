@@ -26,13 +26,8 @@ const authController = {
   },
   async isauth(req, res, next) {
     try {
-      res.json({ ok: "good" });
+      res.json(req.user);
     } catch (error) {}
-  },
-  async testrole(req, res, next) {
-    try {
-      res.send({ok:"done"})
-    } catch (err) {}
   },
 };
 

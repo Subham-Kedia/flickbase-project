@@ -2,13 +2,7 @@ const Accesscontrol = require("accesscontrol")
 
 let grantsObject = {
     admin:{
-        test:{
-            "create:any":['*'],
-            "read:any":['*'],
-            "update:any":['*'],
-            "delete:any":["*"],
-        },
-        articles:{
+        profile:{
             "create:any":['*'],
             "read:any":['*'],
             "update:any":['*'],
@@ -16,11 +10,9 @@ let grantsObject = {
         }
     },
     user:{
-        test:{
-            "read:any":["*"]
-        },
-        articles:{
-            "read:any":["*"]
+        profile:{
+            "read:own":["*"],
+            "update:own":["*", "!password", "!_id"]
         }
     }
 }
