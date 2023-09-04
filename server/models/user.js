@@ -2,39 +2,53 @@ const mongoose = require("mongoose")
 const validator = require("validator")
 const bcrypt = require("bcrypt")
 const jwt = require("jsonwebtoken")
+const httpStatus = require("http-status")
+const { ApiError } = require("../middlewares/errorApi")
+const { isStrongPassword } = require("../data/utils")
 
 const userSchema = mongoose.Schema(
   {
     email: {
       type: String,
-      required: true,
+      required: [true, "Please provide an email"],
       unique: true,
       trim: true,
       lowercase: true,
       validate(value) {
         if (!validator.isEmail(value)) {
-          throw new Error("Invalid Email")
+          throw new ApiError(
+            httpStatus.BAD_REQUEST,
+            "Please provide a valid email"
+          )
         }
       },
     },
     password: {
       type: String,
-      required: true,
+      required: [true, "Password is required"],
       trim: true,
+      validate(value) {
+        if (!isStrongPassword(value)) {
+          throw new ApiError(
+            httpStatus.BAD_REQUEST,
+            "Please use a strong password"
+          )
+        }
+      },
     },
     role: {
       type: String,
-      enum: ["user", "admin"],
+      enum: ["admin", "user"],
       default: "user",
     },
     firstName: {
       type: String,
-      maxLength: 100,
+      maxLength: 25,
       trim: true,
     },
     lastName: {
       type: String,
-      maxLength: 100,
+      maxLength: 25,
       trim: true,
     },
     age: {
@@ -53,6 +67,7 @@ const userSchema = mongoose.Schema(
     timestamps: true,
   }
 )
+
 userSchema.pre("save", async function (next) {
   let user = this
   if (user.isModified("password")) {
@@ -62,10 +77,11 @@ userSchema.pre("save", async function (next) {
   }
   next()
 })
+
 userSchema.statics.isEmailTaken = async function (email) {
   const user = await this.findOne({ email })
-  if (user) return true
-  return false
+  if (!user) return false
+  return true
 }
 
 userSchema.methods.generateToken = async function () {
@@ -76,9 +92,9 @@ userSchema.methods.generateToken = async function () {
 }
 
 userSchema.methods.comparePassword = async function (password) {
-    const user = this
-    const match = await bcrypt.compare(password, user.password)
-    return match
+  const user = this
+  const match = await bcrypt.compare(password, user.password)
+  return match
 }
 
 const User = mongoose.model("User", userSchema)

@@ -32,7 +32,7 @@ app.use(
 app.use(passport.initialize())
 passport.use("jwt", jwtStrategy)
 
-app.use("/", routes)
+app.use("/api", routes)
 
 // middleware for error handling
 app.use(convertToApiError)

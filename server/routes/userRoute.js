@@ -1,13 +1,12 @@
 const express = require("express")
-// middlewares
+
 const auth = require("../middlewares/auth")
-
 const userController = require("../controller/userController")
+const userRoute = express.Router()
 
-const router = express.Router()
+userRoute
+  .route("/profile")
+  .get(auth("readOwn", "profile"), userController.getProfile)
+  .patch(auth("updateOwn", "profile"), userController.updateProfile)
 
-router.route("/profile")
-.get(auth("readOwn", "profile"), userController.getProfile)
-.patch(auth("updateOwn", "profile"), userController.updateProfile)
-
-module.exports = router
+module.exports = userRoute
