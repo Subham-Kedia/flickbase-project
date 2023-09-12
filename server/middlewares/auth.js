@@ -5,7 +5,7 @@ const { roles } = require("../config/roles")
 
 const verify = (req, res, resolve, reject, rights) => async (error, user) => {
   if (error || !user) {
-    return reject(new ApiError(httpStatus.UNAUTHORIZED, "sorry, unauthorized"))
+    return reject(new ApiError(httpStatus.UNAUTHORIZED, "You are unauthorized"))
   }
   req.user = {
     _id: user._id,

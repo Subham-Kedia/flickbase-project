@@ -1,6 +1,7 @@
 const httpStatus = require("http-status")
 const { ApiError } = require("../middlewares/errorApi")
-const { User } = require("../models/user")
+const { User } = require("../models/userModel")
+const { findUserByEmail } = require("./userService")
 
 const createUser = async (email, password) => {
   try {
@@ -26,6 +27,20 @@ const getAuthToken = (user) => {
   return token
 }
 
+const signInWithEmailandPassword = async (email, password) => {
+  try {
+    const user = await findUserByEmail(email)
+    if (!user)
+      throw new ApiError(httpStatus.BAD_REQUEST, "Email Does not Exist")
+    if (!(await user.comparePassword(password))) {
+      throw new ApiError(httpStatus.BAD_REQUEST, "Invalid Password")
+    }
+    return user
+  } catch (err) {
+    throw err
+  }
+}
+
 const verifyUser = async (email, password) => {
   const user = await User.findOne({ email })
   if (user) {
@@ -40,4 +55,9 @@ const verifyUser = async (email, password) => {
   }
 }
 
-module.exports = { createUser, getAuthToken, verifyUser }
+module.exports = {
+  createUser,
+  getAuthToken,
+  verifyUser,
+  signInWithEmailandPassword,
+}

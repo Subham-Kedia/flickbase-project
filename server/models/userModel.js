@@ -65,6 +65,19 @@ const userSchema = mongoose.Schema(
   },
   {
     timestamps: true,
+    virtuals: {
+      fullName: {
+        get() {
+          if (this.firstName && this.lastName)
+            return this.firstName + " " + this.lastName
+          else return undefined
+        },
+      },
+    },
+    toObject: {
+      flattenObjectIds: true,
+      virtuals: true,
+    },
   }
 )
 

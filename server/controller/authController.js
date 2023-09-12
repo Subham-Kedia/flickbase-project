@@ -19,16 +19,13 @@ const authController = {
   async login(req, res, next) {
     try {
       const { email, password } = req.body
-      const verified = await authService.verifyUser(email, password)
-      if (verified) res.status(200).send("user verified")
+      const user = await authService.signInWithEmailandPassword(email, password)
+      const token = await authService.getAuthToken(user)
+
+      res.cookie("x-access-token", token).send({ user, token })
     } catch (error) {
       next(error)
     }
-  },
-  async isauth(req, res, next) {
-    try {
-      res.json(req.user)
-    } catch (error) {}
   },
 }
 

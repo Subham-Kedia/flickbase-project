@@ -1,10 +1,10 @@
-const {User} = require("../models/user")
-const {ApiError} = require("../middlewares/errorApi")
+const { User } = require("../models/userModel")
+const { ApiError } = require("../middlewares/errorApi")
 const httpStatus = require("http-status")
 
 const findUserByEmail = async (email) => {
   try {
-    const user = User.findOne({email})
+    const user = User.findOne({ email })
     if (!user) throw new ApiError(httpStatus.NOT_FOUND, "user not found")
     return user
   } catch (err) {
@@ -25,7 +25,7 @@ const findUserById = async (_id) => {
 const updateProfile = async (req) => {
   try {
     const user = User.findOneAndUpdate(
-      {_id: req.user._id},
+      { _id: req.user._id },
       {
         $set: {
           firstName: req.body.firstName,
@@ -44,4 +44,30 @@ const updateProfile = async (req) => {
   }
 }
 
-module.exports = {findUserByEmail, findUserById, updateProfile}
+const updateEmail = async (req) => {
+  try {
+    if (await User.isEmailTaken(req.body.newEmail)) {
+      throw new ApiError(httpStatus.BAD_REQUEST, "Sorry Email Already Taken")
+    }
+    const user = User.findOneAndUpdate(
+      {
+        _id: req.user._id,
+      },
+      {
+        $set: {
+          email: req.body.newEmail,
+          verified: false,
+        },
+      },
+      {
+        returnDocument: "after",
+      }
+    )
+    if (!user) throw new ApiError(httpStatus.NOT_FOUND, "user not found")
+    return user
+  } catch (err) {
+    throw err
+  }
+}
+
+module.exports = { findUserByEmail, findUserById, updateProfile, updateEmail }
