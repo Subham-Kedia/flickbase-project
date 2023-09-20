@@ -81,6 +81,15 @@ const userSchema = mongoose.Schema(
   }
 )
 
+userSchema.methods.toJSON = function () {
+  const userObj = this.toObject()
+  delete userObj.password
+  delete userObj._id
+  delete userObj.__v
+
+  return userObj
+}
+
 userSchema.pre("save", async function (next) {
   let user = this
   if (user.isModified("password")) {

@@ -3,7 +3,7 @@ const { ApiError } = require("../middlewares/errorApi")
 const { User } = require("../models/userModel")
 const { findUserByEmail } = require("./userService")
 
-const createUser = async (email, password) => {
+const createUser = async (email, password, firstName, lastName, age) => {
   try {
     if (await User.isEmailTaken(email)) {
       throw new ApiError(
@@ -14,6 +14,9 @@ const createUser = async (email, password) => {
     const user = new User({
       email,
       password,
+      firstName,
+      lastName,
+      age
     })
     await user.save()
     return user

@@ -4,8 +4,8 @@ const httpStatus = require("http-status")
 const authController = {
   async signup(req, res, next) {
     try {
-      const { email, password } = req.body
-      const user = await authService.createUser(email, password)
+      const { email, password, firstName, lastName, age } = req.body
+      const user = await authService.createUser(email, password, firstName, lastName, age)
       const token = await authService.getAuthToken(user)
 
       // sending verification email

@@ -5,7 +5,7 @@ mongoose.set("strictQuery", true)
 
 const connectToDB = async () => {
   try {
-    await mongoose.connect(connectionURL)
+    await mongoose.connect(process.env.CONNECTION_URL)
     console.log("Mongoose connected successfully")
   } catch (err) {
     console.log("ERROR-mongoose connection: ", err.message)
