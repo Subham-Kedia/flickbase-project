@@ -1,5 +1,6 @@
 const mongoose = require("mongoose")
 const validator = require("validator")
+const { v4 } = require("uuid")
 const bcrypt = require("bcrypt")
 const jwt = require("jsonwebtoken")
 const httpStatus = require("http-status")
@@ -8,6 +9,11 @@ const { isStrongPassword } = require("../data/utils")
 
 const userSchema = mongoose.Schema(
   {
+    _id: {
+      type: String,
+      alias: "userId",
+      default: v4(),
+    },
     email: {
       type: String,
       required: [true, "Please provide an email"],
@@ -65,6 +71,7 @@ const userSchema = mongoose.Schema(
   },
   {
     timestamps: true,
+    id: false,
     virtuals: {
       fullName: {
         get() {
@@ -108,7 +115,7 @@ userSchema.statics.isEmailTaken = async function (email) {
 
 userSchema.methods.generateToken = async function () {
   const user = this
-  const userObj = { sub: user._id.toHexString(), email: user.email }
+  const userObj = { sub: user._id, email: user.email }
   const token = jwt.sign(userObj, process.env.DB_SECRET, { expiresIn: "1d" })
   return token
 }
@@ -121,7 +128,7 @@ userSchema.methods.comparePassword = async function (password) {
 
 userSchema.methods.generateEmailVerificationToken = async function () {
   const user = this
-  const userObject = { sub: user._id.toHexString() }
+  const userObject = { sub: user._id }
   const token = jwt.sign(userObject, process.env.DB_SECRET, {
     expiresIn: 1000 * 60 * 30,
   })
