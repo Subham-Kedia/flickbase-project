@@ -110,6 +110,15 @@ userSchema.methods.comparePassword = async function (password) {
   return match
 }
 
+userSchema.methods.generateEmailVerificationToken = async function () {
+  const user = this
+  const userObject = { sub: user._id.toHexString() }
+  const token = jwt.sign(userObject, process.env.DB_SECRET, {
+    expiresIn: 1000 * 60 * 30,
+  })
+  return token
+}
+
 const User = mongoose.model("User", userSchema)
 
 module.exports = { User }

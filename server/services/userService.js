@@ -1,6 +1,7 @@
 const { User } = require("../models/userModel")
 const { ApiError } = require("../middlewares/errorApi")
 const httpStatus = require("http-status")
+const jwt = require("jsonwebtoken")
 
 const findUserByEmail = async (email) => {
   try {
@@ -70,4 +71,14 @@ const updateEmail = async (req) => {
   }
 }
 
-module.exports = { findUserByEmail, findUserById, updateProfile, updateEmail }
+const verifyVerificationToken = (token) => {
+  return jwt.verify(token, process.env.DB_SECRET)
+}
+
+module.exports = {
+  findUserByEmail,
+  findUserById,
+  updateProfile,
+  updateEmail,
+  verifyVerificationToken,
+}

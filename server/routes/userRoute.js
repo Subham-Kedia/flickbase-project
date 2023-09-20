@@ -10,5 +10,6 @@ userRoute
   .patch(auth("updateOwn", "profile"), userController.updateProfile)
 
 userRoute.patch("/updateEmail", auth("updateOwn", "profile"), userController.updateUserEmail)
+userRoute.patch("/verifyEmail", userController.verifyEmail)
 
 module.exports = userRoute
